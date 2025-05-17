@@ -1,0 +1,43 @@
+<div class="col-sm-12 mt-2 shadow-sm">
+    <div class="card bordered">
+        <div class="card-header bg-info"></div>
+        <div class="card-body">
+            <h5 class="card-title text-center">
+                 0{{requetes|length}} Requete(s)
+            </h5>
+        </div>
+    </div>
+</div>
+<br>
+{% for req in requetes %}
+<div class="col-sm-12  shadow-sm">
+    <div class="card bordered">
+        <div class="card-header bg-warning text-light">{{ req.date_engr.strftime('%d/%m/%Y %H:%M')}}</div>
+        <div class="card-body">
+            <h5 class="card-title"><a href="{{ url_for('requestnote.get_detail', id=req.id)}}">{{req.objet}}</a> <span
+                    class="badge bg-warning">{{req.status}}</span></h5>
+            <p class="card-text">{{req.intitule_ec}}
+            </p>
+        </div>
+    </div>
+</div>
+<br>
+{% else %}
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    Aucune requete n'a ete trouver
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+{% endfor %}
+
+
+<!-- <div class="col-sm-12  shadow-sm">
+    <div class="card bordered">
+        <div class="card-header bg-warning text-light">2025/04/02 12:34</div>
+        <div class="card-body">
+            <h5 class="card-title">Special title treatment <span class="badge bg-warning">Suspendu</span></h5>
+            <p class="card-text">EC443(Securiteinformatique)
+            </p>
+        </div>
+    </div>
+</div>
+<br> -->

@@ -1,0 +1,86 @@
+{% extends "landing/layout.jinja" %}
+{% set hero_size = 'sm'%}
+
+{% block page_hero %}
+<div class="hero-info w-75 d-flex flex-column justify-content-center align-items-center">
+    <h3>{{ _('Traiter et suiver vos requetes en tous simplicite') }}</h3>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('requestnote.index') }}">{{ _('Home') }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ _('mes requetes') }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
+
+{% block page_sections %}
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header bg-warning"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment <span class="badge bg-warning">Suspendu</span></h5>
+                    <p class="card-text">EC443(Securiteinformatique)
+                        <br>
+                        22NTI010A Kana Wilfried TIC3
+                        <br>
+                        piece jointe <span class="badge rounded-pill bg-danger">0</span>
+                        Justificatif <span class="badge rounded-pill bg-info">13</span>
+                        <br>2025/04/02 12:34
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header bg-success"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment <span class="badge bg-warning">Suspendu</span></h5>
+                    <p class="card-text">EC443(Securiteinformatique)
+                        <br>
+                        22NTI010A Kana Wilfried TIC3
+                        <br>
+                        piece jointe <span class="badge rounded-pill bg-danger">0</span>
+                        Justificatif <span class="badge rounded-pill bg-info">13</span>
+                        <br>2025/04/02 12:34
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header bg-warning"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment <span class="badge bg-success">Termine</span></h5>
+                    <p class="card-text">EC443(Securiteinformatique)
+                        <br>
+                        22NTI010A Kana Wilfried TIC3
+                        <br>
+                        piece jointe <span class="badge rounded-pill bg-danger">0</span>
+                        Justificatif <span class="badge rounded-pill bg-info">13</span>
+                        <br>2025/04/02 12:34
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-header bg-warning"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Special title treatment <span class="badge bg-success">Termine</span></h5>
+                    <p class="card-text">EC443(Securiteinformatique)
+                        <br>
+                        22NTI010A Kana Wilfried TIC3
+                        <br>
+                        piece jointe <span class="badge rounded-pill bg-danger">0</span>
+                        Justificatif <span class="badge rounded-pill bg-info">13</span>
+                        <br>2025/04/02 12:34
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

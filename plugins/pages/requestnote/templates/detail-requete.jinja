@@ -1,0 +1,220 @@
+{% extends "landing/layout.jinja" %}
+{% set hero_size = 'sm' %}
+
+{% block page_meta %}
+<title>ENSET Douala|</title>
+{% endblock %}
+
+{% block page_hero %}
+<div class="hero-info w-75 d-flex flex-column justify-content-center align-items-center">
+  <h3>{{ _('Deposer et suiver vos requetes en tous simplicite') }}</h3>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="{{ url_for('requestnote.index') }}">{{ _('Home') }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ _('Suivis de la requete') }}</li>
+    </ol>
+  </nav>
+</div>
+<div class="hero-bg">
+  <img src="{{ url_for('demo.static', filename='img/hero-bg.jpg') }}" alt="">
+</div>
+{% endblock %}
+
+{% block page_sections %}
+<style>
+  #progress-bar {
+    display: table;
+    width: 100%;
+    margin: 0;
+    padding: 15px 15px 0;
+    table-layout: fixed;
+    width: 100%;
+    counter-reset: step;
+
+    li {
+      list-style-type: none;
+      display: table-cell;
+      width: 20%;
+      float: left;
+      font-size: 16px;
+      position: relative;
+      text-align: center;
+
+      &:before {
+        width: 50px;
+        height: 50px;
+        color: #212121;
+        content: counter(step);
+        counter-increment: step;
+        line-height: 50px;
+        font-size: 18px;
+        border: 1px solid rgb(49, 150, 233);
+        display: block;
+        text-align: center;
+        margin: 0 auto 10px auto;
+        border-radius: 50%;
+        background-color: #fff;
+      }
+
+      &:after {
+        width: 100%;
+        height: 10px;
+        content: "";
+        position: absolute;
+        background-color: rgba(88, 84, 84, 0.315);
+        top: 25px;
+        left: -50%;
+        z-index: -1;
+      }
+
+      &:first-child:after {
+        content: none;
+      }
+
+      &.step-done {
+        color: rgb(49, 150, 233);
+
+        &:before {
+          border-color: rgb(49, 150, 233);
+          background-color: rgb(49, 150, 233);
+          color: #fff;
+          font-family: "FontAwesome";
+        }
+
+        &+li:after {
+          /* ici */
+          background-color: rgb(49, 150, 233);
+        }
+      }
+
+      &.step-active {
+        color: rgb(49, 150, 233);
+
+        &:before {
+          border-color: rgb(49, 150, 233);
+          background-color: rgb(49, 150, 233);
+          color: #fff;
+          font-weight: 700;
+        }
+
+        &+li:after {
+          /* ici */
+          background-color: rgb(49, 150, 233);
+        }
+      }
+    }
+
+  }
+</style>
+<div class="container-fluid pt-2">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="row div">
+        <!-- <h1>Tous les commandes de l'utilisateur non terminer</h1> -->
+        <ol id="progress-bar">
+          <li class="step-done">Commande enregistree</li>
+          <li class="step-done">En production</li>
+          <li class="step-todo">Pret pour livraison</li>
+          <li class="step-todo">Solde ma facture</li>
+        </ol>
+      </div>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+      <div class="col-sm-12  shadow mt-2" style="border-radius:16px">
+        <div class="card ">
+          <div class="card-header  bg-danger text-light">Date de depot : {{requete.date_engr.strftime('%d/%m/%Y
+            %H:%M')}}</div>
+          <div class="card-body">
+            <h5 class="card-title">{{requete.objet}} <span class="badge bg-warning">Suspendu</span></h5>
+            <p class="card-text">{{requete.description}}</p>
+            <p class="card-text">
+              <b>Matiere : </b>{{requete.intitule_ec}} <br>
+              <b>Enseignant</b> : {{responsable.nom}} <br>
+              <b> piece jointe</b> :
+              {% if requete.piece %}
+              <a href="{{ url_for('requestnote.ouvrir_fichier', id=requete.id) }}" target="_blank"> <span
+                  class="badge rounded-pill bg-info">Ouvrir</span></a>
+              {% else %}
+              <span class="badge rounded-pill bg-info">Aucune</span>
+              {% endif %}
+              <br>
+              <b> Justificatif</b> : <span class="badge rounded-pill bg-info">{{justificatifs|length}}</span>
+              <br>
+              {% if requete.date_fin %}
+              <b>Date de fin :</b> {{requete.date_fin}}
+              {% else %}
+              <b>Date de fin : </b> <span class="badge rounded-pill bg-info">en cours</span>
+              {% endif %}
+            </p>
+          </div>
+          <div class="card-footer">
+            <button type="button" class="btn btn-warning text-light" data-bs-toggle="modal"
+              data-bs-target="#addjustifi">
+              <i class="fa-solid fa-plus"></i> Ajouter un justificatif
+            </button>
+            <!-- <a href="" class="btn btn-warning text-light"></a> -->
+            <button class="btn btn-primary"><i class="fa-solid fa-pencil"></i></button>
+            <button class="btn btn-danger"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>
+      </div>
+      <!-- justificatifs -->
+      <div class="col-sm-12 shadow mt-2" style="border-radius:16px">
+        {% if justificatifs %}
+        {% include "includes/list-justificatif.jinja" %}
+        {% endif %}
+      </div>
+      {% include "includes/add-justificatif.jinja" %}
+    </div>
+    <div class="col-md-4 pt-2 bg-light">
+      <div data-bs-spy="scroll" data-bs-offset="0" data-bs-smooth-scroll="true" class="scrollspy-example" tabindex="0">
+        {% include "includes/sidebar.jinja" %}
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- statistique 
+    <section id="stats" class="stats mt-4">
+      <div class="container">
+        <div class="row gy-4 my-2">
+          <div class="col-lg-4 col-md-6 my-0">
+            <div class="stats-item">
+              <i class="fa-solid fa-check-double"></i>
+              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
+                class="purecounter">
+              </span>
+              <p>Special title treatment</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 my-0">
+            <div class="stats-item">
+              <i class="fa-solid fa-check-double"></i>
+              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
+                class="purecounter">
+              </span>
+              <p>Special title treatment</p>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 my-0">
+            <div class="stats-item">
+              <i class="fa-solid fa-check-double"></i>
+              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
+                class="purecounter">
+              </span>
+              <p>Special title treatment</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>-->
+</div>
+{% endblock %}
