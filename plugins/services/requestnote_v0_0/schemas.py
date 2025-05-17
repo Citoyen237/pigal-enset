@@ -95,6 +95,7 @@ class StatutSchema(ma.SQLAlchemySchema):
 
     id = ma.auto_field()
     nom = ma.auto_field()
+    color = ma.auto_field()
     traitements = ma.Nested(Traitement, many=True)
 
 statut_schema = StatutSchema()

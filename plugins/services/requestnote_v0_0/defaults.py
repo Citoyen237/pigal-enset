@@ -1,13 +1,7 @@
 from core.config import db
 from .models import *
 from core.auth.models import User, Role
-
-statut_data = [
-    dict(id=1, nom="suspendu"),
-    dict(id=2, nom="termine"),
-    dict(id=3, nom="rejeter"),
-    dict(id=4, nom="validation"),
-    dict(id=5, nom="en atente")]
+from datetime import datetime
 
 student_data = [
     dict(id="22NTI010A", nom="KENFACK ROMEO", classe="II2", email="nanaromeo237@gmail.com", telephone="655927237"),
@@ -40,12 +34,34 @@ user_data = [
 ]
 
 requete_data = [
-    dict(id=1, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Modelisation", status="en attente"),
+    dict(id=1, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Modelisation", status="terminer"),
     dict(id=2, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Anglais", status="suspendu"),
     dict(id=3, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Informatique", status="rejeter"),
-    dict(id=4, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Geographie", status="terminer")
+    dict(id=4, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Geographie", status="approuver", date_fin=datetime.utcnow()),
+    dict(id=5, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Geographie", status="approuver"),
+    dict(id=6, objet="absence de note", responsable_id="34ENTI023", etudiant_id="student1", intitule_ec="Modelisation", status="en attente"),
 
 ] 
+
+statut_data = [
+    dict(id=1, nom="suspendu", color="dark"),
+    dict(id=2, nom="termine", color="success"),
+    dict(id=3, nom="rejeter", color="danger"),
+    dict(id=4, nom="approuver", color="warning"),
+    dict(id=5, nom="en attente", color="secondary")]
+
+traitement_data =[
+    dict(id=1, commentaire="Les requetes ne sont plus recevable", requete_id=5, responsable_id="34ENTI023", statut_id=4, date_tr=datetime.utcnow()),
+    dict(id=2, commentaire="Les requetes ne sont plus recevable", requete_id=3, responsable_id="34ENTI023",statut_id=3, date_tr=datetime.utcnow()),
+    dict(id=3, commentaire="envoyer vos recus de paiement", requete_id=2, responsable_id="34ENTI023", statut_id=1, date_tr=datetime.utcnow()),
+    dict(id=4, commentaire="Les requetes ne sont plus recevable", requete_id=4, responsable_id="34ENTI023", statut_id=4, date_tr=datetime.utcnow()),
+    dict(id=5, commentaire="Votre note a ete modifier 13 au lieu de 10", requete_id=1, responsable_id="34ENTI023",statut_id=5, date_tr=datetime.utcnow()),
+    dict(id=6, commentaire="envoyer vos recus de paiement", requete_id=1, responsable_id="34ENTI023",statut_id=1, date_tr=datetime.utcnow()),
+    dict(id=7, commentaire="", requete_id=1, responsable_id="34ENTI023",statut_id=4, date_tr=datetime.utcnow()),
+    dict(id=8, commentaire="Votre note a ete modifier 13 au lieu de 10", requete_id=1, responsable_id="34ENTI023",statut_id=2, date_tr=datetime.utcnow()),
+    dict(id=9, commentaire="Votre note a ete modifier 13 au lieu de 10", requete_id=6, responsable_id="34ENTI023",statut_id=5, date_tr=datetime.utcnow())
+
+]
 def init_data():
 
     for row in statut_data:
@@ -78,4 +94,10 @@ def init_data():
         requete = Requete(**row)
         # user.set_password(row['pwd'])
         db.session.merge(requete)
+    db.session.commit()
+
+    for row in traitement_data:
+        traitement = Traitement(**row)
+        # user.set_password(row['pwd'])
+        db.session.merge(traitement)
     db.session.commit()

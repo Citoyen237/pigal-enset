@@ -46,12 +46,19 @@ os.makedirs(upload_folder, exist_ok=True)
 @ui.login_required
 @ui.route("/")
 def index():
-    requetes = Requete.query.filter_by(etudiant_id=current_user.id).order_by(Requete.date_engr.desc()).all()
+    statut = request.args.get('statut')  # Récupère le statut dans l'URL
+    requetes = Requete.query.filter_by(etudiant_id=current_user.id)
+    nombre = Requete.query.filter_by(etudiant_id=current_user.id).count()
+    if statut:
+        requetes = requetes.filter_by(status=statut).order_by(Requete.date_engr.desc()).all()
+    else :
+        requetes = requetes.order_by(Requete.date_engr.desc()).all()
     suspendu = Requete.query.filter_by(status="suspendu").order_by(Requete.date_engr.desc()).all()
     rejeter = Requete.query.filter_by(status="rejeter").order_by(Requete.date_engr.desc()).all()
+    approuver = Requete.query.filter_by(status="approuver").order_by(Requete.date_engr.desc()).all()
     terminer = Requete.query.filter_by(status="terminer").order_by(Requete.date_engr.desc()).all()
     debut = Requete.query.filter_by(status="en attente").order_by(Requete.date_engr.desc()).all()
-    return render_template("index.jinja", requetes=requetes, suspendu=suspendu, rejeter=rejeter, terminer=terminer, debut=debut)
+    return render_template("index.jinja", nombre=nombre, requetes=requetes, approuver=approuver, suspendu=suspendu, rejeter=rejeter, terminer=terminer, debut=debut)
 
 @ui.login_required
 @ui.route("/soumettre-une-requete", methods=['GET', 'POST'])
@@ -91,6 +98,17 @@ def send_requete():
                 etudiant_id=current_user.id
             )
         db.session.add(requete)
+        db.session.commit()
+        
+    
+        requete_id = Requete.query.order_by(Requete.id.desc()).first()
+
+        traitement = Traitement(
+           requete_id=requete_id.id,
+           responsable_id=data.responsable_id,
+           statut_id=5
+        )
+        db.session.add(traitement)
         db.session.commit()
 
         responsable = Responsable.query.get(data.responsable_id)
@@ -154,6 +172,8 @@ def get_detail(id):
     requetep = Requete.query.get_or_404(id)
     justificatifs = Justificatif.query.filter_by(requete_id=id).all()
     responsablee= Responsable.query.get_or_404(requetep.responsable_id)
+    teachers = Responsable.query.all()
+    traitements = Traitement.query.filter_by(requete_id=id).order_by(Traitement.id.desc()).all()[1:]
     if request.method == 'POST':
         schema= JustificatifSchema()
         data = request.form.to_dict()
@@ -177,13 +197,22 @@ def get_detail(id):
             )
             db.session.add(requete)
             db.session.commit()
-            
+
             flash("Justificatif ajouter avec succès", "success")
             # data=""
             return redirect(url_for('requestnote.get_detail', id=requetep.id))
             # return render_template("detail-requete.jinja", requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
     else :     
-        return render_template("detail-requete.jinja", requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
+        return render_template("detail-requete.jinja",traitements=traitements, teachers=teachers, requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
+
+@ui.route('/detail-de-la-requete/delete/<int:id>')
+def delete_requete(id):
+    requete = Requete.query.get_or_404(id)
+    db.session.delete(requete)
+    db.session.commit()
+    flash('Requête supprimée avec succès.', 'success')
+    return redirect(url_for('requestnote.index'))
+
 
 @ui.login_required
 @ui.route("/requete-adresse")

@@ -18,7 +18,7 @@ class Requete(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     objet = db.Column(db.String(100))
     intitule_ec = db.Column(db.String(100))
-    status = db.Column(db.String(100), default='en atente')
+    status = db.Column(db.String(100), default='en attente')
     piece = db.Column(db.String(100), nullable=True)
     responsable_id = db.Column(db.String(100), db.ForeignKey('responsables.id'), nullable=False)
     description = db.Column((db.Text), nullable=True)
@@ -29,7 +29,19 @@ class Requete(db.Model):
     # responsable = db.relationship('Responsable', backref='requetes_gerees') 
     
     justificatifs = db.relationship('Justificatif', backref='requetes', lazy='dynamic')
-    traitements = db.relationship('Traitement', backref='requetes', lazy='dynamic')
+    traitements = db.relationship('Traitement',
+                                  backref=db.backref('requetes', lazy='select'))
+
+    @property   
+    def get_statut(self):
+        dernier = Traitement.query.filter_by(requete_id=self.id).order_by(Traitement.id.desc()).first()
+        return dernier
+    
+    # @property   
+    # def get_color(self):
+    #     dernier = Traitement.query.filter_by(requete_id=self.id).order_by(Traitement.id.desc()).first()
+    #     # dernier = self.traitements.order_by(Traitement.id.desc()).first()
+    #     return dernier.get_statut
 
 class Justificatif(db.Model):
     __bind_key__ = 'requestnote_v0'
@@ -50,6 +62,14 @@ class Responsable(db.Model):
     email = db.Column(db.String(120), unique=True)
     traitements = db.relationship('Traitement', backref='responsables', lazy='dynamic')
 
+class Statut(db.Model):
+    __bind_key__ = 'requestnote_v0'
+    __tablename__ = 'statuts'
+    id = db.Column(db.Integer, primary_key=True)
+    nom = db.Column(db.String(100))
+    color = db.Column(db.String(100))
+    # traitements = db.relationship('Traitement', backref='statuts', lazy='dynamic')
+
 class Traitement(db.Model):
     __bind_key__ = 'requestnote_v0'
     __tablename__ = 'traitements'
@@ -60,10 +80,17 @@ class Traitement(db.Model):
     responsable_id = db.Column(db.Integer, db.ForeignKey('responsables.id'), nullable=False)
     statut_id = db.Column(db.Integer, db.ForeignKey('statuts.id'), nullable=False)
 
-class Statut(db.Model):
-    __bind_key__ = 'requestnote_v0'
-    __tablename__ = 'statuts'
-    id = db.Column(db.Integer, primary_key=True)
-    nom = db.Column(db.String(100))
-    traitements = db.relationship('Traitement', backref='statuts', lazy='dynamic')
+    @property   
+    def status(self):
+        statut = Statut.query.filter_by(id=self.statut_id).first()
+        return statut
+    
+    @property   
+    def reponsable(self):
+        statut = Responsable.query.filter_by(id=self.responsable_id).first()
+        return statut.nom
+    
+
+    # statut = db.relationship('Statut', backref=db.backref('requetes', lazy='select'))
+
 

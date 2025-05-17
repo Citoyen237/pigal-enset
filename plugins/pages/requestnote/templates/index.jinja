@@ -17,97 +17,71 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="stats col-md-8  pt-3">
-     <div class="row">
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-header bg-secondary text-light"></div>
-          <div class="card-body">
-            <h5 class="card-title"> <a href=""> 0{{debut|length}} en atente</a></h5>
+    <div class="stats col-md-3  pt-3 shadow bg-light">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="card">
+            <div class="card-header bg-primary text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title"><a href="{{ url_for('requestnote.send_requete') }}"><i
+                    class="fa-solid fa-plus"></i> Soumettre une requete</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card bordered">
+            <div class="card-header bg-info"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center">
+              <a href="{{url_for('requestnote.index')}}">0{{nombre}} Requete(s)</a>  
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-secondary text-light"></div>
+            <div class="card-body"> 
+              <h5 class="card-title text-center"> <a href="{{url_for('requestnote.index', statut='en attente')}}"> 0{{debut|length}} en attente</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-warning text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center"> <a href="{{url_for('requestnote.index', statut='approuver')}}"> 0{{approuver|length}} Approuver</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-dark text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center"><a href="{{url_for('requestnote.index', statut='suspendu')}}"> 0{{suspendu|length}} Suspendu</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-danger text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center"><a href="{{url_for('requestnote.index', statut='rejeter')}}">0{{rejeter|length}} Rejeter</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-success text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center"><a href="{{url_for('requestnote.index', statut='terminer')}}">0{{ terminer|length}} Terminer</a></u></h5>
+            </div>
           </div>
         </div>
       </div>
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-header bg-warning text-light"></div>
-          <div class="card-body">
-            <h5 class="card-title"><a href=""> 0{{suspendu|length}} Suspendu</a></h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-header bg-danger text-light"></div>
-          <div class="card-body">
-            <h5 class="card-title"><a href="">0{{rejeter|length}} Rejeter</a></h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="card">
-          <div class="card-header bg-success text-light"></div>
-          <div class="card-body">
-            <h5 class="card-title"><a href="">0{{ terminer|length}} Terminer</a></u></h5>
-          </div>
-        </div>
-      </div>
-     </div>
-      <!-- <div class="col-md-3">
-        <div class="card bg-primary">
-          <div class="card-body">
-            <h5 class="card-title text-light">Special title treatment</h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 ">
-        <div class="card bg-warning">
-          <div class="card-body">
-            <h5 class="card-title text-light">Special title treatment</h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3 ">
-        <div class="card bg-danger">
-          <div class="card-body">
-            <h5 class="card-title text-light">Special title treatment</h5>
-            <p class="card-text">With supporting text below as a natural.</p>
-          </div>
-        </div>
-      </div> -->
-      <!-- <div class="stats-item card">
-            <i class="fa-solid fa-check-double"></i>
-            <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-              class="purecounter"> Recus
-            </span>
-            <p>Special title treatment</p>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 my-0">
-          <div class="stats-item card">
-            <i class="fa-solid fa-check-double"></i>
-            <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-              class="purecounter">Suspendu
-            </span>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 my-0">
-          <div class="stats-item card">
-            <i class="fa-solid fa-check-double"></i>
-            <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-              class="purecounter">Rejeter
-            </span>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 my-0">
-          <div class="stats-item card">
-            <i class="fa-solid fa-check-double"></i>
-            <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-              class="purecounter">Terminer
-            </span>
-          </div>
-        </div> -->
-      <!-- plan b -->
-      <div class="col-md-12 mt-3">
+    </div>
+    <div class="col-md-9">
+      <div class="row">
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -118,50 +92,9 @@
         {% endfor %}
         {% endif %}
         {% endwith %}
-      </div>
-      <div class="col-md-12 mt-2">
-        <a href="{{ url_for('requestnote.send_requete') }}" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Soumettre une
-          requete</a>
-      </div>
-    </div>
-    <div class="col-md-4 pt-2 shadow-sm">
       {% include "includes/sidebar.jinja" %}
     </div>
+    </div>
   </div>
-
-  <!-- statistique 
-    <section id="stats" class="stats mt-4">
-      <div class="container">
-        <div class="row gy-4 my-2">
-          <div class="col-lg-4 col-md-6 my-0">
-            <div class="stats-item">
-              <i class="fa-solid fa-check-double"></i>
-              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-                class="purecounter">
-              </span>
-              <p>Special title treatment</p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 my-0">
-            <div class="stats-item">
-              <i class="fa-solid fa-check-double"></i>
-              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-                class="purecounter">
-              </span>
-              <p>Special title treatment</p>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 my-0">
-            <div class="stats-item">
-              <i class="fa-solid fa-check-double"></i>
-              <span data-purecounter-start="0" data-purecounter-end="300" data-purecounter-duration="1"
-                class="purecounter">
-              </span>
-              <p>Special title treatment</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>-->
 </div>
 {% endblock%}
