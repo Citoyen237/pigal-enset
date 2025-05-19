@@ -1,9 +1,15 @@
 {% for req in requetes %}
-<div class="col-sm-4 mt-2">
+<div class="
+{% if col %}
+  {{col}}
+{%else%}
+  col-md-12
+{% endif %}
+mt-2">
     <div class="card">
         <div class="card-header bg-{{req.get_statut.status.color}} text-light">{{ req.date_engr.strftime('%d/%m/%Y %H:%M')}}</div>
         <div class="card-body">
-            <h5 class="card-title"><a href="{{ url_for('requestnote.get_detail', id=req.id)}}">{{req.objet}}</a> <span
+            <h5 class="card-title"><a href="{{ url_for(url, id=req.id)}}">{{req.objet}}</a> <span
                     class="badge bg-{{req.get_statut.status.color}}">{{req.get_statut.status.nom}}</span></h5>
             <p class="card-text"><b>Matiere : </b> {{req.intitule_ec}}</p>
             
@@ -21,16 +27,3 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 {% endfor %}
-
-
-<!-- <div class="col-sm-12  shadow-sm">
-    <div class="card bordered">
-        <div class="card-header bg-warning text-light">2025/04/02 12:34</div>
-        <div class="card-body">
-            <h5 class="card-title">Special title treatment <span class="badge bg-warning">Suspendu</span></h5>
-            <p class="card-text">EC443(Securiteinformatique)
-            </p>
-        </div>
-    </div>
-</div>
-<br> -->

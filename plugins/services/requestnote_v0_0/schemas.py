@@ -77,11 +77,8 @@ class TraitementSchema(ma.SQLAlchemySchema):
         model = Traitement
         load_instance = True
 
-    id = ma.auto_field()
     commentaire = ma.auto_field()
-    date_tr = ma.auto_field()
     requete_id = ma.auto_field()
-    responsable_id = ma.auto_field()
     statut_id = ma.auto_field()
 
 traitement_schema = TraitementSchema()

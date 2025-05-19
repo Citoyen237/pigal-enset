@@ -23,7 +23,6 @@ class Requete(db.Model):
     responsable_id = db.Column(db.String(100), db.ForeignKey('responsables.id'), nullable=False)
     description = db.Column((db.Text), nullable=True)
     date_engr = db.Column((db.DateTime), default=datetime.utcnow)
-    date_fin = db.Column((db.DateTime), nullable=True)
     etudiant_id = db.Column(db.String(100), db.ForeignKey('etudiants.id'), nullable=False)
 
     # responsable = db.relationship('Responsable', backref='requetes_gerees') 
@@ -65,7 +64,7 @@ class Responsable(db.Model):
 class Statut(db.Model):
     __bind_key__ = 'requestnote_v0'
     __tablename__ = 'statuts'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(100), primary_key=True)
     nom = db.Column(db.String(100))
     color = db.Column(db.String(100))
     # traitements = db.relationship('Traitement', backref='statuts', lazy='dynamic')
@@ -78,7 +77,7 @@ class Traitement(db.Model):
     date_tr = db.Column((db.Date), default=datetime.utcnow)
     requete_id = db.Column(db.Integer, db.ForeignKey('requetes.id'), nullable=False)
     responsable_id = db.Column(db.Integer, db.ForeignKey('responsables.id'), nullable=False)
-    statut_id = db.Column(db.Integer, db.ForeignKey('statuts.id'), nullable=False)
+    statut_id = db.Column(db.String(100), db.ForeignKey('statuts.id'), nullable=False)
 
     @property   
     def status(self):

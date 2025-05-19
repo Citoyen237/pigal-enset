@@ -6,7 +6,7 @@
   <h3>{{ _('Deposer et suiver vos requetes en tous simplicite') }}</h3>
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ url_for('requestnote.index') }}">{{ _('Home') }}</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('requestnote.controle_role') }}">{{ _('Home') }}</a></li>
       <li class="breadcrumb-item active" aria-current="page">{{ _('mes requetes') }}</li>
     </ol>
   </nav>
@@ -67,6 +67,14 @@
             <div class="card-header bg-danger text-light"></div>
             <div class="card-body">
               <h5 class="card-title text-center"><a href="{{url_for('requestnote.index', statut='rejeter')}}">0{{rejeter|length}} Rejeter</a></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-12 mt-2">
+          <div class="card">
+            <div class="card-header bg-warning text-light"></div>
+            <div class="card-body">
+              <h5 class="card-title text-center"><a href="{{url_for('requestnote.index', statut='valider')}}">0{{ valider|length}} Valider</a></u></h5>
             </div>
           </div>
         </div>

@@ -18,6 +18,9 @@
         text-decoration: none;
         border-radius: 5px;
       }
+      .button a{
+        color:white
+      } 
     
     .footer {
       margin-top: 30px;
@@ -29,14 +32,16 @@
   </style>
 </head>
 <body>
-    <h2>Nouvelle requête reçue</h2>
-    <p>Bonjour M./Mme {{ responsable.nom}},</p>
-    <p>Une nouvelle requête vient d'être déposée par un étudiant.</p>
+    <h2>Taitement de la requete</h2>
+    <p>Bonjour M./Mme {{ student.nom}},</p>
+    <p><strong>Observation :</strong> {{ requete.observation }} </p>
+    <p>{{commentaire}}</p>
+    <p>Votre requete a ete {{statut}}.</p>
     <p><strong>Objet :</strong> {{ requete.objet }}</p>
     <p><strong>Matiere :</strong> {{ requete.intitule_ec }}</p>
     <p><strong>Date :</strong> {{ requete.date_engr.strftime('%d/%m/%Y %H:%M') }}</p>
     <br/>
-    <a href="{{urls}}" class="button">Gérer la requête</a>
+    <a href="{{urls}}" class="button" style="color: white;">Gérer la requête</a>
   <div class="footer">
     --<br>
     Administration ENSET Douala

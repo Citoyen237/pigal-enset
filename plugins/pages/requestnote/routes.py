@@ -37,15 +37,32 @@ mail = Mail()
 
 ui = UiBlueprint(__name__)
 
-ui.register_entry('home_menu', 'home_demo4', _l('requete'), endpoint='requestnote.index', rank=4)
+ui.register_entry('home_menu', 'home_demo4', _l('requete'), endpoint='requestnote.controle_role', rank=4)
 
 upload_folder = 'plugins/pages/requestnote/static/uploads'
 os.makedirs(upload_folder, exist_ok=True)
 
 # student request :: route a changer
-@ui.login_required
 @ui.route("/")
+@ui.login_required
+def controle_role():
+        if current_user.has_roles('chef_depart'):
+            pass
+        elif current_user.has_roles('student'):
+            return redirect(url_for('requestnote.index'))
+        elif current_user.has_roles('cellule') :
+            pass
+        elif current_user.has_roles('teacher') :
+            return redirect(url_for('requestnote.get_teacher'))
+        else :
+            return "auccun role"
+
+
+@ui.route("/accueil")
+@ui.login_required
 def index():
+    url='requestnote.get_detail'
+    col = 'col-md-4'
     statut = request.args.get('statut')  # Récupère le statut dans l'URL
     requetes = Requete.query.filter_by(etudiant_id=current_user.id)
     nombre = Requete.query.filter_by(etudiant_id=current_user.id).count()
@@ -53,16 +70,18 @@ def index():
         requetes = requetes.filter_by(status=statut).order_by(Requete.date_engr.desc()).all()
     else :
         requetes = requetes.order_by(Requete.date_engr.desc()).all()
-    suspendu = Requete.query.filter_by(status="suspendu").order_by(Requete.date_engr.desc()).all()
-    rejeter = Requete.query.filter_by(status="rejeter").order_by(Requete.date_engr.desc()).all()
-    approuver = Requete.query.filter_by(status="approuver").order_by(Requete.date_engr.desc()).all()
-    terminer = Requete.query.filter_by(status="terminer").order_by(Requete.date_engr.desc()).all()
-    debut = Requete.query.filter_by(status="en attente").order_by(Requete.date_engr.desc()).all()
-    return render_template("index.jinja", nombre=nombre, requetes=requetes, approuver=approuver, suspendu=suspendu, rejeter=rejeter, terminer=terminer, debut=debut)
+    valider= Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="valider").order_by(Requete.date_engr.desc()).all()
+    suspendu = Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="suspendu").order_by(Requete.date_engr.desc()).all()
+    rejeter = Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="rejeter").order_by(Requete.date_engr.desc()).all()
+    approuver = Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="approuver").order_by(Requete.date_engr.desc()).all()
+    terminer = Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="terminer").order_by(Requete.date_engr.desc()).all()
+    debut = Requete.query.filter_by(etudiant_id=current_user.id).filter_by(status="en attente").order_by(Requete.date_engr.desc()).all()
+    return render_template("index.jinja",url=url,valider=valider, col=col,nombre=nombre, requetes=requetes, approuver=approuver, suspendu=suspendu, rejeter=rejeter, terminer=terminer, debut=debut)
 
-@ui.login_required
 @ui.route("/soumettre-une-requete", methods=['GET', 'POST'])
+@ui.login_required
 def send_requete():
+    url='requestnote.get_detail'
     requetes = Requete.query.filter_by(etudiant_id=current_user.id).order_by(Requete.date_engr.desc()).all()
     # form = RequeteForm()
     teachers = Responsable.query.all()
@@ -112,13 +131,13 @@ def send_requete():
         db.session.commit()
 
         responsable = Responsable.query.get(data.responsable_id)
-        url = "http://127.0.0.1:5000/requestnote/"
+        urls = f'http://127.0.0.1:5000/requestnote/requete-adresse-detail/{requete_id.id}'
 
         msg = Message(
             subject="Nouvelle requête à traiter",
             recipients=[responsable.email],  # ou une adresse par défaut pour tester
             # body=f"Bonjour {responsable.nom},\n\nUne nouvelle requête vous a été adressée.",
-            html=render_template('emails/new-requete.jinja',requete=requete, responsable=responsable, url=url)
+            html=render_template('emails/new-requete.jinja',requete=requete, responsable=responsable, urls=urls)
         )
         mail.send(msg)
 
@@ -129,10 +148,10 @@ def send_requete():
             # flash(f"Erreur de validation : {err.messages}", "danger")
   
     
-    return render_template("send-requete.jinja",teachers=teachers, requetes=requetes)
+    return render_template("send-requete.jinja",teachers=teachers, requetes=requetes,url=url)
 
-@ui.login_required
 @ui.route('/ouvrir/<int:id>')
+@ui.login_required
 def ouvrir_fichier(id):
     # Récupérer le fichier depuis la base de données
     requete = Requete.query.get_or_404(id)
@@ -149,8 +168,8 @@ def ouvrir_fichier(id):
         download_name=requete.piece  # Nom suggéré si téléchargement manuel
     )
 
-@ui.login_required
 @ui.route('/open/<int:id>')
+@ui.login_required
 def ouvrir_file(id):
     # Récupérer le fichier depuis la base de données
     justificatif = Justificatif.query.get_or_404(id)
@@ -165,9 +184,10 @@ def ouvrir_file(id):
         download_name=justificatif.justificatif  # Nom suggéré si téléchargement manuel
     )
 
-@ui.login_required
 @ui.route("/detail-de-la-requete/<int:id>/",methods=['GET', 'POST'])
+@ui.login_required
 def get_detail(id):
+    url='requestnote.get_detail'
     requetes = Requete.query.filter_by(etudiant_id=current_user.id).order_by(Requete.date_engr.desc()).all()
     requetep = Requete.query.get_or_404(id)
     justificatifs = Justificatif.query.filter_by(requete_id=id).all()
@@ -203,7 +223,7 @@ def get_detail(id):
             return redirect(url_for('requestnote.get_detail', id=requetep.id))
             # return render_template("detail-requete.jinja", requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
     else :     
-        return render_template("detail-requete.jinja",traitements=traitements, teachers=teachers, requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
+        return render_template("detail-requete.jinja",url=url,traitements=traitements, teachers=teachers, requetes=requetes, requete=requetep, justificatifs=justificatifs, responsable=responsablee)
 
 @ui.route('/detail-de-la-requete/delete/<int:id>')
 def delete_requete(id):
@@ -213,8 +233,74 @@ def delete_requete(id):
     flash('Requête supprimée avec succès.', 'success')
     return redirect(url_for('requestnote.index'))
 
-
-@ui.login_required
+# responsable
 @ui.route("/requete-adresse")
-def get_reponsable():
-    return render_template("responsable-page.jinja")
+@ui.login_required
+def get_teacher():
+    url = 'requestnote.get_teacher'
+    statut = request.args.get('statut')  # Récupère le statut dans l'URL
+    requetes = Requete.query.filter_by(responsable_id=current_user.id)
+    nombre = Requete.query.filter_by(responsable_id=current_user.id).count()
+    if statut:
+        requetes = requetes.filter_by(status=statut).order_by(Requete.date_engr.desc()).all()
+    else :
+        requetes = requetes.order_by(Requete.date_engr.desc()).all()
+    valider= Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="valider").order_by(Requete.date_engr.desc()).all()
+    suspendu = Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="suspendu").order_by(Requete.date_engr.desc()).all()
+    rejeter = Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="rejeter").order_by(Requete.date_engr.desc()).all()
+    approuver = Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="approuver").order_by(Requete.date_engr.desc()).all()
+    terminer = Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="terminer").order_by(Requete.date_engr.desc()).all()
+    debut = Requete.query.filter_by(responsable_id=current_user.id).filter_by(status="en attente").order_by(Requete.date_engr.desc()).all()
+    return render_template("teacher/responsable-page.jinja",url=url,valider=valider, nombre=nombre, requetes=requetes, approuver=approuver, suspendu=suspendu, rejeter=rejeter, terminer=terminer, debut=debut)
+
+
+@ui.route("/requete-adresse-detail/<int:id>", methods=['POST','GET'])
+@ui.login_required
+def get_admin_detail(id):
+    if request.method == 'POST':
+        schema =TraitementSchema()
+        data = request.form.to_dict()
+        data = schema.load(request.form)
+        requete = Requete.query.get_or_404(id)
+
+        
+        observation = None
+        
+        if data.commentaire :
+            commentaire = data.commentaire
+
+        requete.status = data.statut_id
+        db.session.commit()
+        statut = data.statut_id
+        commentaire = data.commentaire
+        traitement = Traitement(
+           requete_id=requete.id,
+           responsable_id=current_user.id,
+           statut_id=data.statut_id,
+           commentaire=commentaire
+        )
+        db.session.add(traitement)
+        db.session.commit()
+
+        student = Etudiant.query.get(requete.etudiant_id)
+        urls = f'http://127.0.0.1:5000/requestnote/detail-de-la-requete/{requete.id}'
+
+        msg = Message(
+            subject="Suivis de la requete",
+            recipients=[student.email],  # ou une adresse par défaut pour tester
+            # body=f"Bonjour {responsable.nom},\n\nUne nouvelle requête vous a été adressée.",
+            html=render_template('emails/change-statut.jinja',commentaire=commentaire,statut=statut,requete=requete, student=student, urls=urls)
+        )
+        mail.send(msg)
+
+        flash("Traitement efectuer", "success")
+        return redirect(url_for("requestnote.get_teacher"))
+    else : 
+      url='requestnote.get_admin_detail'
+      requetes = Requete.query.filter_by(responsable_id=current_user.id).order_by(Requete.date_engr.desc()).all()
+      requetep = Requete.query.get_or_404(id)
+      justificatifs = Justificatif.query.filter_by(requete_id=id).all()
+      student= Etudiant.query.filter_by(id=requetep.etudiant_id).first()
+      traitements = Traitement.query.filter_by(requete_id=id).order_by(Traitement.id.desc()).all()[1:]
+      return render_template("teacher/detail-requete.jinja",url=url,student=student,traitements=traitements,requetes=requetes, requete=requetep, justificatifs=justificatifs)
+# @ui.roles_accepted('student')

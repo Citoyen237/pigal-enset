@@ -10,7 +10,7 @@
   <h3>{{ _('Deposer et suiver vos requetes en tous simplicite') }}</h3>
   <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="{{ url_for('requestnote.index') }}">{{ _('Home') }}</a></li>
+      <li class="breadcrumb-item"><a href="{{ url_for('requestnote.controle_role') }}">{{ _('Home') }}</a></li>
       <li class="breadcrumb-item active" aria-current="page">{{ _('Suivis de la requete') }}</li>
     </ol>
   </nav>
@@ -44,7 +44,7 @@
                 class="badge bg-{{requete.get_statut.status.color}}">{{requete.get_statut.status.nom}}</span>
             </h5>
             <p class="card-text">
-              {% if requete.piece %}
+              {% if requete.description %}
               </b>{{requete.description}}</p>
             {% endif %}
             <p class="card-text">
@@ -65,11 +65,12 @@
               <b> Observation : </b> {{requete.get_statut.commentaire}}
               {% endif %}
               <br>
-              {% if requete.date_fin %}
+              <b>Date:</b> {{requete.get_statut.date_tr.strftime('%d/%m/%Y %H:%M')}}
+              <!-- {% if requete.date_fin %}
               <b>Date de fin :</b> {{requete.date_fin.strftime('%d/%m/%Y %H:%M')}}
               {% else %}
               <b>Date de fin : </b> <span class="badge rounded-pill bg-info">en cours</span>
-              {% endif %}
+              {% endif %} -->
             </p>
           </div>
           <div class="card-footer">
